@@ -1,117 +1,117 @@
-const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTi69SlOELKx_49-rnpEBPel2YfVUCuzZ5evYGgFD7cevYc6laRx_T2W2Vx7kyoxXZWO_iiyUvcFNru/pub?gid=0&single=true&output=csv";
-
 const container = document.getElementById("scores-container");
 
-function loadScores() {
+const games = [
 
-    // Clears old cards before reloading
-    container.innerHTML = "";
+    {
+        league: "LFG",
+        away: "Baltimore",
+        awayScore: "47",
+        home: "Fyatteville",
+        homeScore: "31",
+        status: "FINAL",
+        channel: "RSC1"
+    },
 
-    Papa.parse(sheetURL, {
+    {
+        league: "HCBB",
+        away: "San Francisco",
+        awayScore: "5",
+        home: "Milwaukee",
+        homeScore: "1",
+        status: "FINAL",
+        channel: "RSC1"
+    },
 
-        download: true,
-        header: true,
+    {
+        league: "HSFL",
+        away: "Marcos",
+        awayScore: "35",
+        home: "Hough",
+        homeScore: "43",
+        status: "FINAL",
+        channel: "RSC3"
+    },
 
-        complete: function(results) {
+    {
+        league: "UFF",
+        away: "Portsmouth",
+        awayScore: "-",
+        home: "Panthers",
+        homeScore: "-",
+        status: "PLAYING",
+        channel: "RSC2"
+    }
 
-            const data = results.data;
+];
 
-            data.forEach(game => {
+games.forEach(game => {
 
-                if (!game.LEAGUE) return;
+    const statusClass = game.status.toLowerCase();
 
-                let awayScore = "-";
-                let homeScore = "-";
+    const card = `
+    
+    <div class="league-section">
 
-                if (game.SCORE && game.SCORE.includes("-")) {
+        <div class="league-header">
+            ${game.league}
+        </div>
 
-                    const scores = game.SCORE.split("-");
+        <div class="game-card">
 
-                    awayScore = scores[0];
-                    homeScore = scores[1];
+            <div class="team-row">
 
-                }
+                <div class="team-info">
 
-                const statusClass = game.STATUS
-                    ? game.STATUS.toLowerCase()
-                    : "";
+                    <img 
+                        class="team-logo"
+                        src="assets/logos/${game.league.toLowerCase()}/${game.away.toLowerCase()}.png"
+                        onerror="this.style.display='none'"
+                    >
 
-                const card = `
-                
-                <div class="league-section">
-
-                    <div class="league-header">
-                        ${game.LEAGUE}
-                    </div>
-
-                    <div class="game-card">
-
-                        <div class="team-row">
-
-                            <div class="team-info">
-
-                                <img 
-                                    class="team-logo"
-                                    src="assets/logos/${game.LEAGUE.toLowerCase()}/${game.AWAY.toLowerCase()}.png"
-                                    onerror="this.style.display='none'"
-                                >
-
-                                <span class="team-name">
-                                    ${game.AWAY}
-                                </span>
-
-                            </div>
-
-                            <span class="team-score">
-                                ${awayScore}
-                            </span>
-
-                        </div>
-
-                        <div class="team-row">
-
-                            <div class="team-info">
-
-                                <img 
-                                    class="team-logo"
-                                    src="assets/logos/${game.LEAGUE.toLowerCase()}/${game.HOME.toLowerCase()}.png"
-                                    onerror="this.style.display='none'"
-                                >
-
-                                <span class="team-name">
-                                    ${game.HOME}
-                                </span>
-
-                            </div>
-
-                            <span class="team-score">
-                                ${homeScore}
-                            </span>
-
-                        </div>
-
-                        <div class="game-footer ${statusClass}">
-                            ${game.STATUS} • ${game.CHANNEL}
-                        </div>
-
-                    </div>
+                    <span class="team-name">
+                        ${game.away}
+                    </span>
 
                 </div>
 
-                `;
+                <span class="team-score">
+                    ${game.awayScore}
+                </span>
 
-                container.innerHTML += card;
+            </div>
 
-            });
+            <div class="team-row">
 
-        }
+                <div class="team-info">
 
-    });
+                    <img 
+                        class="team-logo"
+                        src="assets/logos/${game.league.toLowerCase()}/${game.home.toLowerCase()}.png"
+                        onerror="this.style.display='none'"
+                    >
 
-}
+                    <span class="team-name">
+                        ${game.home}
+                    </span>
 
-// Load immediately
-loadScores();
+                </div>
 
-// Auto refresh every 30 seconds
-setInterval(loadScores, 30000);
+                <span class="team-score">
+                    ${game.homeScore}
+                </span>
+
+            </div>
+
+            <div class="game-footer ${statusClass}">
+                ${game.status} • ${game.channel}
+            </div>
+
+        </div>
+
+    </div>
+
+    `;
+
+    container.innerHTML += card;
+
+});
